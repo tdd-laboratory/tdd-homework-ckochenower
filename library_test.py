@@ -10,6 +10,10 @@ US until 15-20 years later.) It is celebrated by 77.9% of the population--
 trending toward 80.                                                                
 '''
 
+DATE_CORPUS = '''
+I was born 2015-07-25.
+'''
+
 class TestCase(unittest.TestCase):
 
     # Helper function
@@ -29,6 +33,25 @@ class TestCase(unittest.TestCase):
     # Third unit test; prove that if we look for integers where there are none, we get no results.
     def test_no_integers(self):
         self.assert_extract("no integers", library.integers)
+
+    # Fourth unit test; prove that we correctly extract dates in iso8601 format.
+    def test_date_iso8601(self):
+        self.assert_extract('I was born on 2015-07-25.', library.dates_iso8601, '2015-07-25')
+
+    # Fifth unit test; prove that if we do not extract dates in iso8601 format
+    # (YYYY-MM-DD) where the month is greater than 12 or the day is greater than
+    # 31.
+    def test_date_iso8601_invalid_month_or_day(self):
+        # Prove that an invalid month is ignored
+        self.assert_extract('I was born on 2015-13-25.', library.dates_iso8601)
+        # Prove that an invalid day is ignored
+        self.assert_extract('I was born on 2015-07-32.', library.dates_iso8601)
+
+    # Sixth unit test; prove that we correctly extract dates in YYYY MMM DD
+    # format.
+    def test_date_dd_mmm_yyyy(self):
+        self.assert_extract('My younger sister was born 25 Jan 2017.',
+                            library.dates_dd_mmm_yyyy, '25 Jan 2017')
 
 
 if __name__ == '__main__':
